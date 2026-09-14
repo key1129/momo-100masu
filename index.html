@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#ff7aa8">
+<title>ももちゃんの百マスチャレンジ</title>
+<style>
+:root{--pink:#ff7aa8;--dark:#e95689;--light:#fff0f5;--yellow:#ffd66b;--green:#64b96e;--blue:#5b9bd5;--ink:#403840;--muted:#786f78;--shadow:0 8px 24px #834c631f}*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;background:linear-gradient(160deg,#fff8fb,#fffdf4)}button,input{font:inherit}button{cursor:pointer}.app{width:min(780px,100%);margin:auto;padding:18px 14px 45px}header{text-align:center}h1{font-size:clamp(1.4rem,5vw,2.1rem);color:var(--dark);margin:8px 0 5px}.subtitle{margin:0 0 16px;color:var(--muted)}.card{background:#fffffff2;border:2px solid #ff7aa826;border-radius:23px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}.hero{display:grid;grid-template-columns:125px 1fr;gap:15px;align-items:center}.tree{text-align:center;font-size:78px}.caption{text-align:center;color:var(--green);font-weight:800}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{text-align:center;padding:11px 5px;border-radius:16px;background:var(--light)}.stat strong,.stat span{display:block}.stat strong{font-size:1.1rem;margin-top:3px}.stat span{font-size:.72rem;color:var(--muted)}h2{font-size:1.15rem;margin:0 0 13px}.entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.entry{padding:15px;border-radius:19px;text-align:center}.add{background:#fff2f6;border:2px solid #ffc1d5}.sub{background:#eff7ff;border:2px solid #b8d9f6}.entry h3{margin:0 0 11px}.time{display:flex;justify-content:center;align-items:center;gap:6px}.time input{width:68px;padding:10px 5px;text-align:center;font-size:1.3rem;font-weight:800;border:2px solid #dbcbd1;border-radius:12px;background:white}.primary{display:block;width:min(340px,100%);margin:16px auto 0;border:0;border-radius:999px;padding:14px;color:white;font-weight:900;font-size:1.08rem;background:linear-gradient(135deg,var(--pink),var(--dark));box-shadow:0 6px 0 #c94373}.primary:active{transform:translateY(4px);box-shadow:0 2px 0 #c94373}.message{display:none;margin-top:15px;padding:15px;text-align:center;font-weight:900;line-height:1.6;border-radius:18px;background:#fff6cf;border:2px solid var(--yellow)}.message.show{display:block}.tabs{display:flex;gap:7px;margin-bottom:12px}.tab{flex:1;border:2px solid #eadce1;background:white;border-radius:999px;padding:9px;font-weight:800}.tab.active{color:white;background:var(--pink);border-color:var(--pink)}.chart-wrap{height:230px}canvas{width:100%;height:100%}.progress{text-align:center;color:var(--blue);font-weight:800}.list{list-style:none;margin:0;padding:0;max-height:290px;overflow:auto}.item{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center;padding:10px 3px;border-bottom:1px solid #eee3e7}.badge{padding:4px 8px;border-radius:999px;font-size:.78rem;font-weight:800}.badge.addition{background:#ffe2ec;color:#bd3f6c}.badge.subtraction{background:#e0f0ff;color:#3477ae}.record-time{font-weight:900}.delete{border:0;border-radius:9px;padding:7px;background:#fff0f1;color:#bd3548}.empty{text-align:center;color:var(--muted);padding:20px}details summary{cursor:pointer;font-weight:900}.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.secondary{flex:1;min-width:145px;padding:10px;border:2px solid #e7d8de;border-radius:12px;background:white;font-weight:700}.note{font-size:.78rem;line-height:1.55;color:var(--muted)}#restoreInput{display:none}footer{text-align:center;color:var(--muted);font-size:.75rem}@media(max-width:570px){.hero{grid-template-columns:1fr}.entry-grid{grid-template-columns:1fr}.tree{font-size:65px}.card{padding:15px}.item{grid-template-columns:1fr auto auto}.item time{grid-column:1}.item .badge{grid-column:2}.item .record-time{grid-column:2}.item .delete{grid-column:3;grid-row:1/3}}
+</style>
+</head>
+<body><main class="app">
+<header><h1>🌸 ももちゃんの百マスチャレンジ 🌸</h1><p class="subtitle">足し算も引き算も、がんばりを育てよう！</p></header>
+<section class="card hero"><div><div class="tree" id="tree">🌰</div><div class="caption" id="caption">最初の一歩を待っているよ！</div></div><div class="stats"><div class="stat">🔥<strong id="streak">0日</strong><span>れんぞく</span></div><div class="stat">⭐<strong id="total">0回</strong><span>ぜんぶの記録</span></div><div class="stat">🏆<strong id="best">--:--</strong><span id="bestLabel">選択中の最高</span></div></div></section>
+<section class="card"><h2>⏱️ 今日のタイムを入れてね</h2><div class="entry-grid">
+<div class="entry add"><h3>➕ 足し算</h3><div class="time"><input id="addMin" type="number" min="0" max="59" inputmode="numeric" placeholder="2" aria-label="足し算の分">分<input id="addSec" type="number" min="0" max="59" inputmode="numeric" placeholder="18" aria-label="足し算の秒">秒</div></div>
+<div class="entry sub"><h3>➖ 引き算</h3><div class="time"><input id="subMin" type="number" min="0" max="59" inputmode="numeric" placeholder="2" aria-label="引き算の分">分<input id="subSec" type="number" min="0" max="59" inputmode="numeric" placeholder="18" aria-label="引き算の秒">秒</div></div></div>
+<button class="primary" id="save">入力したタイムを記録する！</button><div class="message" id="message" role="status"></div></section>
+<section class="card"><h2>📈 がんばりグラフ</h2><div class="tabs"><button class="tab active" data-filter="all">両方</button><button class="tab" data-filter="addition">足し算</button><button class="tab" data-filter="subtraction">引き算</button></div><div class="chart-wrap"><canvas id="chart"></canvas></div><p class="progress" id="progress">最初の記録を待っているよ！</p></section>
+<section class="card"><h2>📖 これまでの記録</h2><ul class="list" id="list"></ul></section>
+<section class="card"><details><summary>⚙️ おうちの人メニュー</summary><div class="tools"><button class="secondary" id="backup">JSONでバックアップ</button><button class="secondary" id="restore">記録をもどす</button><input id="restoreInput" type="file" accept="application/json,.json"></div><p class="note">記録はこの端末のブラウザに保存されます。以前の版の記録は足し算として引き継ぎます。端末変更に備えて定期的にバックアップしてください。</p></details></section><footer>今日できたことが、いちばんの新記録。</footer>
+</main><script>
+'use strict';
+const STORAGE_KEY=`momo100masu:${location.pathname}:records:v1`;
+let filter='all';
+let records=load();
+const $=id=>document.getElementById(id);
+
+function load(){
+  try{
+    const a=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');
+    return Array.isArray(a)?a.filter(r=>r&&r.date&&Number(r.seconds)>0).map(r=>({id:String(r.id||`${r.date}-${r.seconds}`),date:String(r.date),seconds:Number(r.seconds),type:r.type==='subtraction'?'subtraction':'addition'})).sort((a,b)=>new Date(a.date)-new Date(b.date)):[];
+  }catch{return[];}
+}
+
+function persist(){localStorage.setItem(STORAGE_KEY,JSON.stringify(records));}
+function dateKey(d=new Date()){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function fmt(s){return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;}
+function fdate(s){const d=new Date(s);return`${d.getMonth()+1}/${d.getDate()}`;}
+
+function parseLocalDate(dateStr){
+  return new Date(dateStr.replace(/-/g, '/'));
+}
+
+function streak(){
+  if(!records.length)return 0;
+  const ds=[...new Set(records.map(r=>dateKey(new Date(r.date))))].sort().reverse();
+  const today=dateKey();
+  const lastDate=parseLocalDate(ds[0]);
+  const tDate=parseLocalDate(today);
+  const diffDays=Math.round((tDate-lastDate)/86400000);
+  if(diffDays>1)return 0;
+  let n=1;
+  let cur=parseLocalDate(ds[0]);
+  for(let i=1;i<ds.length;i++){
+    const prev=parseLocalDate(ds[i]);
+    const diff=Math.round((cur-prev)/86400000);
+    if(diff===1){n++;cur=prev;}
+    else if(diff>1){break;}
+  }
+  return n;
+}
+
+function value(prefix){
+  const m=$(`${prefix}Min`).value,s=$(`${prefix}Sec`).value;
+  if(m===''&&s==='')return null;
+  const min=Number(m||0),sec=Number(s||0);
+  if(!Number.isInteger(min)||!Number.isInteger(sec)||min<0||sec<0||sec>59||(min===0&&sec===0))return false;
+  return min*60+sec;
+}
+
+function save(){
+  const add=value('add'),sub=value('sub');
+  if(add===false||sub===false){alert('正しいタイムを入れてください。秒は0から59までです。');return;}
+  if(add===null&&sub===null){alert('足し算か引き算、または両方のタイムを入れてください。');return;}
+  const before=[...records],now=Date.now(),added=[];
+  if(add!==null)added.push({id:`${now}-a`,date:new Date(now).toISOString(),seconds:add,type:'addition'});
+  if(sub!==null)added.push({id:`${now+1}-s`,date:new Date(now+1).toISOString(),seconds:sub,type:'subtraction'});
+  records.push(...added);records.sort((a,b)=>new Date(a.date)-new Date(b.date));persist();
+  let lines=[];
+  for(const r of added){
+    const old=before.filter(x=>x.type===r.type),best=old.length?Math.min(...old.map(x=>x.seconds)):null,label=r.type==='addition'?'足し算':'引き算';
+    if(best===null)lines.push(`${label}、はじめての記録！`);
+    else if(r.seconds<best)lines.push(`🎉 ${label}は新記録！ ${best-r.seconds}秒速くなったよ！`);
+    else lines.push(`⭐ ${label}も今日のがんばりが増えたよ！`);
+  }
+  $('message').innerHTML=lines.join('<br>');$('message').classList.add('show');
+  ['addMin','addSec','subMin','subSec'].forEach(id=>$(id).value='');render();
+}
+
+function selected(){return filter==='all'?records:records.filter(r=>r.type===filter);}
+function tree(n){if(n>=100)return['🌸🌳🌸','100回達成！満開だね！'];if(n>=50)return['🌳🌸','お花がさいたよ！'];if(n>=30)return['🌳','りっぱな木になったね！'];if(n>=10)return['🌿','ぐんぐん育っているよ！'];if(n)return['🌱','小さな芽が出たよ！'];return['🌰','最初の一歩を待っているよ！'];}
+
+function stats(){
+  const data=selected(),t=tree(records.length);
+  $('tree').textContent=t[0];
+  $('caption').textContent=t[1];
+  $('streak').textContent=`${streak()}日`;
+  $('total').textContent=`${records.length}回`;
+  
+  if(!data.length){
+    $('best').textContent='--:--';
+  }else if(filter==='all'){
+    const addRecs=records.filter(r=>r.type==='addition');
+    const subRecs=records.filter(r=>r.type==='subtraction');
+    const bestAdd=addRecs.length?Math.min(...addRecs.map(r=>r.seconds)):null;
+    const bestSub=subRecs.length?Math.min(...subRecs.map(r=>r.seconds)):null;
+    if(bestAdd!==null&&bestSub!==null){
+      $('best').textContent=`${fmt(bestAdd)} / ${fmt(bestSub)}`;
+    }else if(bestAdd!==null){
+      $('best').textContent=`${fmt(bestAdd)} (足)`;
+    }else{
+      $('best').textContent=`${fmt(bestSub)} (引)`;
+    }
+  }else{
+    $('best').textContent=fmt(Math.min(...data.map(r=>r.seconds)));
+  }
+  
+  $('bestLabel').textContent=filter==='addition'?'足し算の最高':filter==='subtraction'?'引き算の最高':'最高 (足/引)';
+  if(!data.length)$('progress').textContent='この種類の記録はまだないよ！';
+  else{
+    const diff=data[0].seconds-data[data.length-1].seconds;
+    $('progress').textContent=diff>0?`はじめより${diff}秒速くなったよ！`:`${data.length}回も積み重ねたよ！`;
+  }
+}
+
+function list(){
+  const ul=$('list');ul.innerHTML='';const data=selected();
+  if(!data.length){ul.innerHTML='<li class="empty">まだ記録がありません</li>';return;}
+  [...data].reverse().forEach(r=>{
+    const li=document.createElement('li');li.className='item';
+    const label=r.type==='addition'?'足し算':'引き算';
+    li.innerHTML=`<time>${fdate(r.date)}</time><span class="badge ${r.type}">${label}</span><span class="record-time">${fmt(r.seconds)}</span>`;
+    const b=document.createElement('button');b.className='delete';b.textContent='削除';
+    b.onclick=()=>{if(confirm('この記録を消しますか？')){records=records.filter(x=>x.id!==r.id);persist();render();}};
+    li.appendChild(b);ul.appendChild(li);
+  });
+}
+
+function chart(){
+  const c=$('chart'),box=c.getBoundingClientRect(),ratio=devicePixelRatio||1;
+  c.width=Math.max(1,box.width*ratio);c.height=Math.max(1,box.height*ratio);
+  const x=c.getContext('2d');x.scale(ratio,ratio);
+  const w=box.width,h=box.height;
+  x.clearRect(0,0,w,h);
+
+  const data = selected();
+  if(!data.length){
+    x.fillStyle='#786f78';x.textAlign='center';x.font='15px sans-serif';
+    x.fillText('記録するとグラフが出るよ',w/2,h/2);return;
+  }
+
+  const p={l:45,r:17,t:18,b:34};
+  
+  // 1. ユニークな日付軸（最大14日分）を作成
+  const uniqueDates = [...new Set(data.map(r=>dateKey(new Date(r.date))))].sort().slice(-14);
+  
+  // 2. Y軸のスケール調整（最小値・最大値）
+  const activeRecords = data.filter(r => uniqueDates.includes(dateKey(new Date(r.date))));
+  const vs = activeRecords.map(r=>r.seconds);
+  let min=Math.min(...vs)-5,max=Math.max(...vs)+5;
+  if(min===max){min-=10;max+=10;}
+
+  const px = dateStr => {
+    const idx = uniqueDates.indexOf(dateStr);
+    if(idx === -1) return -1;
+    return uniqueDates.length === 1 ? (p.l + w - p.r) / 2 : p.l + idx * (w - p.l - p.r) / (uniqueDates.length - 1);
+  };
+  const py = v => p.t + (v - min) * (h - p.t - p.b) / (max - min);
+
+  // 3. Y軸目盛り描画
+  x.strokeStyle='#eadfe3';x.fillStyle='#786f78';x.font='11px sans-serif';x.textAlign='right';
+  for(let i=0;i<=3;i++){
+    const yy=p.t+i*(h-p.t-p.b)/3,v=min+i*(max-min)/3;
+    x.beginPath();x.moveTo(p.l,yy);x.lineTo(w-p.r,yy);x.stroke();
+    x.fillText(fmt(Math.round(v)),p.l-6,yy+4);
+  }
+
+  // 4. タイプ別のライン描画関数（日付キーで位置合わせ）
+  const drawSeries = (type, color) => {
+    const points = [];
+    uniqueDates.forEach(dKey => {
+      // その日の最新（最後）の記録を採用
+      const dayRecs = records.filter(r => r.type === type && dateKey(new Date(r.date)) === dKey);
+      if(dayRecs.length > 0) {
+        points.push({ dKey, seconds: dayRecs[dayRecs.length - 1].seconds });
+      }
+    });
+
+    if(points.length === 0) return;
+
+    // 線を描く
+    if(points.length > 1) {
+      x.beginPath();
+      points.forEach((pt, i) => {
+        const xPos = px(pt.dKey);
+        const yPos = py(pt.seconds);
+        if(i === 0) x.moveTo(xPos, yPos);
+        else x.lineTo(xPos, yPos);
+      });
+      x.strokeStyle = color; x.lineWidth = 3; x.stroke();
+    }
+
+    // 点を描く
+    points.forEach(pt => {
+      x.beginPath();
+      x.arc(px(pt.dKey), py(pt.seconds), 4, 0, Math.PI * 2);
+      x.fillStyle = color; x.fill();
+    });
+  };
+
+  if(filter === 'all' || filter === 'addition') {
+    drawSeries('addition', '#e95689'); // 足し算：ピンク
+  }
+  if(filter === 'all' || filter === 'subtraction') {
+    drawSeries('subtraction', '#5b9bd5'); // 引き算：青
+  }
+
+  // 5. X軸日付ラベル描画
+  x.fillStyle='#786f78';x.textAlign='center';
+  const labelIndices = [...new Set([0, Math.floor((uniqueDates.length - 1) / 2), uniqueDates.length - 1])];
+  labelIndices.forEach(i => {
+    const dStr = uniqueDates[i];
+    if(dStr) {
+      x.fillText(fdate(dStr), px(dStr), h - 10);
+    }
+  });
+}
+
+function backup(){
+  const blob=new Blob([JSON.stringify({app:'momo-100masu',version:2,exportedAt:new Date().toISOString(),records},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`momo-100masu-backup-${dateKey()}.json`;a.click();URL.revokeObjectURL(url);
+}
+
+function restore(file){
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const d=JSON.parse(rd.result),a=Array.isArray(d)?d:d.records;
+      if(!Array.isArray(a))throw 0;
+      const keys=new Set(records.map(r=>`${r.date}|${r.seconds}|${r.type}`));
+      a.filter(r=>r&&r.date&&Number(r.seconds)>0).forEach(r=>{
+        const n={id:String(r.id||`${r.date}-${r.seconds}`),date:String(r.date),seconds:Number(r.seconds),type:r.type==='subtraction'?'subtraction':'addition'},k=`${n.date}|${n.seconds}|${n.type}`;
+        if(!keys.has(k)){records.push(n);keys.add(k);}
+      });
+      records.sort((a,b)=>new Date(a.date)-new Date(b.date));persist();render();alert('記録をもどしました！');
+    }catch{alert('正しいバックアップJSONを選んでください。');}
+  };
+  rd.readAsText(file);
+}
+
+function render(){stats();list();requestAnimationFrame(chart);}
+
+$('save').onclick=save;
+$('backup').onclick=backup;
+$('restore').onclick=()=>$('restoreInput').click();
+$('restoreInput').onchange=e=>{
+  if(e.target.files[0]){
+    restore(e.target.files[0]);
+    e.target.value='';
+  }
+};
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  filter=b.dataset.filter;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));
+  render();
+});
+document.querySelectorAll('.time input').forEach(input=>{
+  input.addEventListener('focus',()=>input.select());
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')$('save').click();});
+});
+window.onresize=chart;
+render();
+</script></body></html>
+
+
